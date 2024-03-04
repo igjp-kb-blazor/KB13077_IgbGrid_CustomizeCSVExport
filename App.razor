@@ -1,0 +1,48 @@
+﻿<div style="margin: 24px auto; max-width: 800px; padding: 0 24px; display:flex; flex-direction:column; gap:24px;">
+
+    @*
+    helper.js ファイルをフォールバックページで script タグで読み込んでおき、
+    この .js ファイル内で定義されているスクリプトの名前 "formatDateInRowExporting" を、
+    IgbGrid の ToolbarExportingScript パラメーターに指定することで、
+    CSV エクスポート時の日付列の値を "yyyy/MM/dd" 形式の文字列に書式化しています。
+    *@
+
+    <IgbGrid Height="300px"
+             Data="_people"
+             AutoGenerate="false"
+             DisplayDensity="DisplayDensity.Cosy"
+             ResourceStrings="GridResourceStrings.JA"
+             ToolbarExportingScript="formatDateInRowExporting">
+
+        <IgbGridToolbar>
+            <IgbGridToolbarActions>
+                <IgbGridToolbarExporter />
+            </IgbGridToolbarActions>
+        </IgbGridToolbar>
+
+        <IgbColumn Field="@nameof(Person.Id)" DataType="GridColumnDataType.Number" />
+
+        <IgbColumn Field="@nameof(Person.Name)" Header="氏名" />
+
+        <IgbColumn Field="@nameof(Person.Birthday)" Header="生年月日" DataType="GridColumnDataType.Date" PipeArgs="_dateFormat" />
+
+    </IgbGrid>
+</div>
+
+@code
+{
+#pragma warning disable BL0005
+    private readonly IgbColumnPipeArgs _dateFormat = new() { Format = "yyyy/MM/dd" };
+#pragma warning restore BL0005
+
+    private record Person(int Id, string Name, DateTime Birthday);
+
+    private readonly IEnumerable<Person> _people = [
+        new(1, "Alice", DateTime.Parse("1995/11/23")),
+        new(2, "Bob", DateTime.Parse("1998/02/15")),
+        new(3, "Charlie", DateTime.Parse("2000/07/04")),
+        new(4, "David", DateTime.Parse("2003/10/12")),
+        new(5, "Eve", DateTime.Parse("2005/12/31"))
+    ];
+
+}
